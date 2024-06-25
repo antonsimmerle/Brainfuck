@@ -4,10 +4,17 @@
 
 char* readentirefile(FILE* file);
 
+typedef enum OPERATORKINDS OPERATORKINDS;
+typedef struct OPERATOR OPERATOR;
+typedef struct OPERATORS OPERATORS;
+
+typedef struct NODE NODE;
+typedef struct STACK STACK;
 void push(STACK* stack, size_t data);
 size_t pop(STACK* stack);
 OPERATORS* intermediate(char* input);
 
+typedef struct TAPE TAPE;
 void interpreter(OPERATORS* operators);
 
 int validoperator(char input);
@@ -22,7 +29,7 @@ char* readentirefile(FILE* file) {
     return buffer;
 }
 
-typedef enum {
+enum OPERATORKINDS {
     LEFT          = '<',
     RIGHT         = '>',
     INCREMENT     = '+',
@@ -31,26 +38,26 @@ typedef enum {
     INPUT         = ',',
     JUMPIFZERO    = '[',
     JUMPIFNOTZERO = ']',
-} OPERATORKINDS;
-typedef struct {
+};
+struct OPERATOR {
     size_t address;
     OPERATORKINDS kind;
     size_t property;
-} OPERATOR;
-typedef struct {
+};
+struct OPERATORS {
     OPERATOR* items;
     size_t count;
     size_t capacity;
-} OPERATORS;
+};
 
-typedef struct NODE {
+struct NODE {
     size_t data;
     struct NODE* next; 
-} NODE;
-typedef struct {
+};
+struct STACK {
     NODE* items;
     size_t count;
-} STACK;
+};
 void push(STACK* stack, size_t data) {
     stack->count++;
     NODE* element = (NODE*)malloc(sizeof(NODE));
@@ -106,10 +113,10 @@ OPERATORS* intermediate(char* input) {
     return operators;
 }
 
-typedef struct {
+struct TAPE {
     char* items;
     size_t capacity;
-} TAPE;
+};
 void interpreter(OPERATORS* operators) {
     TAPE tape = { .capacity = CHUNK, .items = (char*)malloc(sizeof(char) * tape.capacity), };
     size_t i = 0;
